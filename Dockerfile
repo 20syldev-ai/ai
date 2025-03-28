@@ -5,4 +5,4 @@ WORKDIR /app
 COPY . .
 RUN npm install
 EXPOSE 11434 5000
-CMD bash -c "ollama serve & while ! nc -z localhost 11434; do sleep 1; done && ollama pull Volko76/llama3.2-instruct-french:1b && node app.js"
+CMD bash -c "ollama serve & sleep 5 && ollama pull Volko76/llama3.2-instruct-french:1b && node app.js"
