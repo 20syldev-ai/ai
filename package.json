@@ -15,7 +15,7 @@
     "dependencies": {
         "cors": "latest",
         "dotenv": "latest",
-        "express": "^latest",
+        "express": "latest",
         "node-fetch": "latest"
     },
     "repository": {
