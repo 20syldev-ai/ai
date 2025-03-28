@@ -13,8 +13,10 @@
         "upgrade:build": "npm upgrade && npm install && node app.js"
     },
     "dependencies": {
-        "cors": "2.8.5",
-        "express": "^4.21.2"
+        "cors": "latest",
+        "dotenv": "latest",
+        "express": "^latest",
+        "node-fetch": "latest"
     },
     "repository": {
         "type": "git",
