@@ -10,7 +10,7 @@ const __dirname = dirname(__filename);
 const app = express();
 
 // Define allowed models & rate limits
-const models = ['llama3.2'], rateLimits = {};
+const models = ['llama3.2'], rateLimits = {}, contextMemory = {};
 
 // Define global variables
 let requests = 0, resetTime = Date.now() + 10000;
@@ -84,8 +84,13 @@ app.get('/', (req, res) => {
 
 // ----------- ----------- GET ENDPOINTS ----------- ----------- //
 
+// Redirect model to ai
+app.get('/:model', (req, res) => {
+    res.redirect(301, `/${req.params.model}/ai`);
+});
+
 // GET ai error
-app.get('/:version/ai', (req, res) => {
+app.get('/:model/ai', (req, res) => {
     res.jsonResponse({ error: 'This endpoint only supports POST requests.' });
 });
 
@@ -93,13 +98,13 @@ app.get('/:version/ai', (req, res) => {
 
 // IA Llama3.2
 app.post('/:model/ai', async (req, res) => {
-    const { model = 'llama3.2', prompt, session } = req.body;
+    const { prompt, session } = req.body;
 
-    if (!model) return res.jsonResponse({ error: 'Please provide a valid model (?model={model})' });
-    if (!prompt) return res.jsonResponse({ error: 'Please provide a valid prompt (&prompt={message})' });
-    if (!session) return res.jsonResponse({ error: 'Please provide a valid session ID (&session={ID})' });
+    if (!prompt) return res.jsonResponse({ error: 'Please provide a valid prompt (?prompt={message})' });
+    if (!session || typeof session !== 'string') return res.jsonResponse({ error: 'Please provide a valid session ID (&session={ID})' });
 
     const now = Date.now();
+    const context = contextMemory[session] || [];
 
     rateLimits[session] = (rateLimits[session] || []).filter(ts => now - ts < 10000);
     if (rateLimits[session].length > 50) {
@@ -109,19 +114,24 @@ app.post('/:model/ai', async (req, res) => {
     rateLimits[session].push(now);
 
     try {
+        console.log(contextMemory[session]);
         const response = await fetch('http://127.0.0.1:11434/api/generate', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ model, prompt })
+            body: JSON.stringify({
+                model: process.env.DEFAULT_MODEL,
+                prompt,
+                context,
+                stream: false
+            })
         });
-        const data = await response.text();
-        const format = data.trim().split('\n').map(item => JSON.parse(item));
-        const reply = format.map(item => item.response).join('');
+        const { context: memory, ...answer } = await response.json();
+        contextMemory[session] = memory;
 
-        res.jsonResponse({ reply });
+        res.jsonResponse(answer);
     } catch (err) {
         res.jsonResponse({ error: 'AI not responding.' });
     }
