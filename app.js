@@ -138,4 +138,4 @@ app.post('/:model/ai', async (req, res) => {
 
 // ----------- ----------- SERVER SETUP ----------- ----------- //
 
-app.listen(5000, '0.0.0.0', () => console.log('AI is running on\n    - http://127.0.0.1:5000\n    - http://localhost:5000'));
+app.listen(5000, () => console.log('AI is running on\n    - http://127.0.0.1:5000\n    - http://localhost:5000'));
