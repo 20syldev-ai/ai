@@ -1,0 +1,34 @@
+{
+    "version": "1.0.0",
+    "name": "@20syldev/ai",
+    "description": "AI API for Ollama made with Express.js",
+    "main": "app.js",
+    "type": "module",
+    "scripts": {
+        "dev": "nodemon app.js",
+        "start": "node app.js",
+        "build": "npm install && node app.js",
+        "upgrade:minor": "npm upgrade",
+        "upgrade:major": "npx npm-check-updates -u && npm install",
+        "upgrade:build": "npm upgrade && npm install && node app.js"
+    },
+    "dependencies": {
+        "cors": "2.8.5",
+        "express": "^4.21.2"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/20syldev/ai.git"
+    },
+    "keywords": [
+        "ai",
+        "ollama",
+        "fast"
+    ],
+    "author": "Sylvain L.",
+    "license": "BSD 3-Clause",
+    "bugs": {
+        "url": "https://github.com/20syldev/ai/issues"
+    },
+    "homepage": "https://ai.sylvain.pro"
+}
