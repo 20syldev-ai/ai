@@ -114,7 +114,6 @@ app.post('/:model/ai', async (req, res) => {
     rateLimits[session].push(now);
 
     try {
-        console.log(contextMemory[session]);
         const response = await fetch('http://127.0.0.1:11434/api/generate', {
             method: 'POST',
             headers: {
